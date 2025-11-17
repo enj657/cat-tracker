@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  devise_for :users
+  get "/users/current", to: "users#current"
   resources :households do
     resources :users
   end
