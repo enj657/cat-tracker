@@ -1,6 +1,8 @@
 class RemindersController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_cat
   before_action :set_reminder, only: [ :show, :update, :destroy ]
+  before_action :authorize_user!
 
   def index
     render json: @cat.reminders
@@ -44,5 +46,11 @@ class RemindersController < ApplicationController
 
   def reminder_params
     params.require(:reminder).permit(:title, :due_date, :completed)
+  end
+
+  def authorize_user!
+    unless @cat.users.include?(current_user)
+      render json: { error: "You do not have permission to modify this reminder" }, status: :forbidden
+    end
   end
 end

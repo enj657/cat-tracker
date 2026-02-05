@@ -22,9 +22,29 @@ h1 = Household.create!(name: "Jacobs Family")
 h2 = Household.create!(name: "Smith Family")
 
 # Users
-u1 = User.create!(name: "Elle", email: "elle@example.com", household: h1)
-u2 = User.create!(name: "Alex", email: "alex@example.com", household: h1)
-u3 = User.create!(name: "Sam", email: "sam@example.com", household: h2)
+u1 = User.create!(
+  name: "Elle", 
+  email: "elle@example.com", 
+  household: h1,
+  password: "password",
+  password_confirmation: "password"
+)
+
+u2 = User.create!(
+  name: "Alex", 
+  email: "alex@example.com", 
+  household: h1,
+  password: "password",
+  password_confirmation: "password"
+)
+
+u3 = User.create!(
+  name: "Sam", 
+  email: "sam@example.com", 
+  household: h2,
+  password: "password",
+  password_confirmation: "password"
+)
 
 # Cats (added breed!)
 c1 = Cat.create!(name: "Whiskers", age: 3, breed: "Siamese")
