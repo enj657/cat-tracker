@@ -37,3 +37,6 @@
 
 # Node modules
 /node_modules
+
+backend/cookies.txt
+cookies.txt
