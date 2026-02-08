@@ -20,10 +20,13 @@ export interface Reminder {
 
 export interface Photo {
   id: number;
+  cat_id: number;
   image_url: string;
+  display_url?: string;
   caption: string;
+  created_at: string;
+  updated_at: string;
 }
-
 export interface Cat {
   id: number;
   name: string;
