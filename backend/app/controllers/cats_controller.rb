@@ -16,8 +16,10 @@ class CatsController < ApplicationController
 
   # POST /cats
   def create
-    cat = Cat.new(params[:cat].permit(:name, :age, :breed, user_ids: []))
+    cat = Cat.new(params[:cat].permit(:name, :age, :breed))
     if cat.save
+      # Assign the current user to the cat
+      cat.users << current_user unless params[:cat][:user_ids]
       cat.user_ids = params[:cat][:user_ids] if params[:cat][:user_ids]
       render json: cat.as_json(include: [ :users ]), status: :created
     else
