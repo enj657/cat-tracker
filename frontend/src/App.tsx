@@ -1,16 +1,22 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import AddCatForm from "./components/AddCatForm";
 import CatDetails from "./pages/CatDetails";
+import Login from "./pages/Login";
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/add-cat" element={<AddCatForm onCatSave={() => {}} />} />
-        <Route path="/cats/:id" element={<CatDetails />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/add-cat" element={<ProtectedRoute><AddCatForm onCatSave={() => {}} /></ProtectedRoute>} />
+          <Route path="/cats/:id" element={<ProtectedRoute><CatDetails /></ProtectedRoute>} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
