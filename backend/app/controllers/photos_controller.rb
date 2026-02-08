@@ -5,25 +5,46 @@ class PhotosController < ApplicationController
   before_action :authorize_user!
 
   def index
-    render json: @cat.photos.as_json(include: [ :cat ])
+    photos = @cat.photos.map do |photo|
+      photo.as_json.merge(
+        display_url: photo.image.attached? ? url_for(photo.image) : photo.image_url
+      )
+    end
+    render json: photos
   end
 
   def show
-    render json: @photo.as_json(include: [ :cat ])
+    render json: @photo.as_json.merge(
+      display_url: @photo.image.attached? ? url_for(@photo.image) : @photo.image_url
+    )
   end
 
   def create
     @photo = @cat.photos.new(photo_params)
+    
+    # Handle file upload if present
+    if params[:photo][:image].present?
+      @photo.image.attach(params[:photo][:image])
+    end
+    
     if @photo.save
-      render json: @photo.as_json(include: [ :cat ]), status: :created
+      render json: @photo.as_json.merge(
+        display_url: @photo.image.attached? ? url_for(@photo.image) : @photo.image_url
+      ), status: :created
     else
       render json: { errors: @photo.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   def update
+    if params[:photo][:image].present?
+      @photo.image.attach(params[:photo][:image])
+    end
+    
     if @photo.update(photo_params)
-      render json: @photo.as_json(include: [ :cat ])
+      render json: @photo.as_json.merge(
+        display_url: @photo.image.attached? ? url_for(@photo.image) : @photo.image_url
+      )
     else
       render json: { errors: @photo.errors.full_messages }, status: :unprocessable_entity
     end
@@ -51,6 +72,6 @@ class PhotosController < ApplicationController
   end
 
   def photo_params
-    params.require(:photo).permit(:image_url, :caption)
+    params.require(:photo).permit(:image_url, :caption, :image)
   end
 end
