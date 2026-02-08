@@ -19,10 +19,13 @@ export default function VisitList({ catId, visits = [], onVisitsUpdated }: Visit
       const res = await fetch(`http://localhost:3000/cats/${catId}/visits`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: 'include',  // Add this!
         body: JSON.stringify({
-          visit_type: visitType,
-          date,
-          notes,
+          visit: {  // Wrap in 'visit' object to match Rails params
+            visit_type: visitType,
+            date,
+            notes,
+          }
         }),
       });
 

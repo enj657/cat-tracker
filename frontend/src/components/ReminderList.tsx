@@ -18,7 +18,14 @@ export default function RemindersSection({ catId, reminders = [], onRemindersUpd
       const res = await fetch(`http://localhost:3000/cats/${catId}/reminders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, due_date: dueDate }),
+        credentials: 'include',  // Add this!
+        body: JSON.stringify({ 
+          reminder: {  // Wrap in 'reminder' object to match Rails params
+            title, 
+            due_date: dueDate,
+            completed: false
+          }
+        }),
       });
       const newReminder = await res.json();
       onRemindersUpdated([...reminders, newReminder]);

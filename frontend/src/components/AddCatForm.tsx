@@ -14,31 +14,31 @@ export default function AddCatForm({ cat, onCancel, onCatSave }: AddCatFormProps
     breed: cat?.breed || "",
   });
 
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  const method = cat ? "PATCH" : "POST";
-  const url = cat
-    ? `http://localhost:3000/cats/${cat.id}`
-    : "http://localhost:3000/cats";
+    e.preventDefault();
+    const method = cat ? "PATCH" : "POST";
+    const url = cat
+      ? `http://localhost:3000/cats/${cat.id}`
+      : "http://localhost:3000/cats";
 
-  try {
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ cat: formData }),
-    });
-    const data = await res.json();
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        credentials: 'include',  // Add this!
+        body: JSON.stringify({ cat: formData }),
+      });
+      const data = await res.json();
 
-    onCatSave?.(data);
-  } catch (error) {
-    console.error("Error saving cat:", error);
-  }
-};
+      onCatSave?.(data);
+    } catch (error) {
+      console.error("Error saving cat:", error);
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3 p-4">

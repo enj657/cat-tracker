@@ -11,7 +11,9 @@ export default function CatDetails() {
   const [cat, setCat] = useState<Cat | null>(null);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/cats/${id}`)
+    fetch(`http://localhost:3000/cats/${id}`, {
+      credentials: 'include',  // Add this!
+    })
       .then((res) => res.json())
       .then(setCat)
       .catch(console.error);
