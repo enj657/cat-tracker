@@ -5,13 +5,39 @@ class CatsController < ApplicationController
 
   # GET /cats
   def index
-    cats = current_user.cats.includes(:visits, :reminders, :photos)
-    render json: cats.as_json(include: [ :users, :visits, :reminders, :photos ])
+    cats = current_user.cats.includes(:visits, :reminders, :photos, :users)
+    
+    cats_json = cats.map do |cat|
+      cat_data = cat.as_json(include: [:users, :visits, :reminders])
+      
+      # Add photos with display_url
+      photos_with_urls = cat.photos.map do |photo|
+        photo.as_json.merge(
+          display_url: photo.image.attached? ? url_for(photo.image) : photo.image_url
+        )
+      end
+      
+      cat_data['photos'] = photos_with_urls
+      cat_data
+    end
+    
+    render json: cats_json
   end
 
   # GET /cats/:id
   def show
-    render json: @cat.as_json(include: [ :users, :visits, :reminders, :photos ])
+    cat_json = @cat.as_json(include: [:users, :visits, :reminders])
+    
+    # Add photos with display_url
+    photos_with_urls = @cat.photos.map do |photo|
+      photo.as_json.merge(
+        display_url: photo.image.attached? ? url_for(photo.image) : photo.image_url
+      )
+    end
+    
+    cat_json['photos'] = photos_with_urls
+    
+    render json: cat_json
   end
 
   # POST /cats
