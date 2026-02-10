@@ -6,9 +6,13 @@ export interface User {
 
 export interface Visit {
   id: number;
+  cat_id: number;
   visit_type: string;
   date: string;
   notes: string;
+  completed?: boolean; // Add this
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Reminder {

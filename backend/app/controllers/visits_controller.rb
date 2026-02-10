@@ -51,6 +51,6 @@ class VisitsController < ApplicationController
   end
 
   def visit_params
-    params.require(:visit).permit(:visit_type, :date, :notes)
+    params.require(:visit).permit(:visit_type, :date, :notes, :completed)
   end
 end
