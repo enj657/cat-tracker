@@ -75,9 +75,62 @@ export default function PhotoGallery({
     }
   };
 
+  const handleDeletePhoto = async (photoId: number) => {
+    if (!window.confirm("Delete this photo?")) return;
+
+    try {
+      const res = await fetch(
+        `http://localhost:3000/cats/${catId}/photos/${photoId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        },
+      );
+
+      if (res.ok) {
+        onPhotosUpdated(photos.filter((p) => p.id !== photoId));
+      } else {
+        alert("Failed to delete photo");
+      }
+    } catch (error) {
+      console.error("Error deleting photo:", error);
+      alert("Failed to delete photo");
+    }
+  };
+
   const getPhotoUrl = (photo: Photo) => {
     return photo.display_url || photo.image_url;
   };
+
+  const setProfilePhoto = async (photoId: number) => {
+    try {
+      const res = await fetch(
+        `http://localhost:3000/cats/${catId}/photos/${photoId}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            photo: {
+              profile_photo: true,
+            },
+          }),
+        },
+      );
+
+      if (res.ok) {
+        // Unset all other photos and set this one
+        const updatedPhotos = photos.map((p) => ({
+          ...p,
+          profile_photo: p.id === photoId,
+        }));
+        onPhotosUpdated(updatedPhotos);
+      }
+    } catch (error) {
+      console.error("Error setting profile photo:", error);
+    }
+  };
+
   return (
     <div className="p-4 border rounded mt-4">
       <h2 className="text-xl font-semibold mb-2">Photo Gallery</h2>
@@ -88,14 +141,38 @@ export default function PhotoGallery({
           {photos.map((photo) => (
             <div
               key={photo.id}
-              className="border rounded overflow-hidden cursor-pointer hover:opacity-80 transition"
-              onClick={() => setLightboxImage(getPhotoUrl(photo))}
+              className="border rounded overflow-hidden relative group"
             >
               <img
                 src={getPhotoUrl(photo)}
                 alt={photo.caption || "Cat photo"}
-                className="w-full h-32 object-cover"
+                className="w-full h-32 object-cover cursor-pointer"
+                onClick={() => setLightboxImage(getPhotoUrl(photo))}
               />
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setProfilePhoto(photo.id);
+                }}
+                className={`absolute top-1 left-1 text-2xl ${
+                  photo.profile_photo
+                    ? "opacity-100"
+                    : "opacity-0 group-hover:opacity-100"
+                } transition-opacity`}
+                title="Set as profile photo"
+              >
+                {photo.profile_photo ? "⭐" : "☆"}
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeletePhoto(photo.id);
+                }}
+                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                title="Delete photo"
+              >
+                ×
+              </button>
               {photo.caption && (
                 <p className="text-sm p-1 text-center bg-gray-100">
                   {photo.caption}

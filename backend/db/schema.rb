@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_09_184239) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_10_165959) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -71,6 +71,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_09_184239) do
     t.text "caption"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "profile_photo", default: false
     t.index ["cat_id"], name: "index_photos_on_cat_id"
   end
 
