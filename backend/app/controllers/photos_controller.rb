@@ -41,6 +41,11 @@ class PhotosController < ApplicationController
       @photo.image.attach(params[:photo][:image])
     end
     
+    # If setting as profile photo, unset all other photos for this cat
+    if params[:photo][:profile_photo] == true
+      @cat.photos.where.not(id: @photo.id).update_all(profile_photo: false)
+    end
+    
     if @photo.update(photo_params)
       render json: @photo.as_json.merge(
         display_url: @photo.image.attached? ? url_for(@photo.image) : @photo.image_url
