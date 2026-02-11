@@ -10,7 +10,7 @@ export interface Visit {
   visit_type: string;
   date: string;
   notes: string;
-  completed?: boolean; // Add this
+  completed?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -28,7 +28,7 @@ export interface Photo {
   image_url: string;
   display_url?: string;
   caption: string;
-  profile_photo?: boolean; // Add this
+  profile_photo?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -37,7 +37,8 @@ export interface Cat {
   id: number;
   name: string;
   age: number;
-  breed?: string;
+  birthday?: string;
+  breed: string;
   users?: User[];
   visits?: Visit[];
   reminders?: Reminder[];

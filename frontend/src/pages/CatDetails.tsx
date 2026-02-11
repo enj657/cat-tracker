@@ -14,7 +14,7 @@ export default function CatDetails() {
 
   useEffect(() => {
     fetch(`http://localhost:3000/cats/${id}`, {
-      credentials: 'include',
+      credentials: "include",
     })
       .then((res) => res.json())
       .then(setCat)
@@ -27,14 +27,14 @@ export default function CatDetails() {
     <div className="p-6 max-w-3xl mx-auto">
       <button
         onClick={() => navigate("/")}
-        className="text-blue-600 underline mb-4"
+        className="bg-pink-500 hover:bg-pink-600 text-white rounded px-4 py-2 mb-4"
       >
         ← Back to Dashboard
       </button>
 
       {isEditing ? (
         <div className="bg-gray-600 p-6 rounded-lg shadow mb-6">
-          <h2 className="text-xl font-bold mb-4">Edit {cat.name}</h2>
+          <h2 className="text-xl font-bold p-4">Edit {cat.name}</h2>
           <AddCatForm
             cat={cat}
             onCancel={() => setIsEditing(false)}
@@ -49,12 +49,35 @@ export default function CatDetails() {
           <div className="flex justify-between items-start">
             <div>
               <h1 className="text-3xl font-bold mb-2">{cat.name}</h1>
-              <p>Age: {cat.age}</p>
+              {cat.birthday && (
+                <>
+                  <p>
+                    Age:{" "}
+                    {(() => {
+                      const birthDate = new Date(cat.birthday);
+                      const today = new Date();
+                      let age = today.getFullYear() - birthDate.getFullYear();
+                      const monthDiff = today.getMonth() - birthDate.getMonth();
+                      if (
+                        monthDiff < 0 ||
+                        (monthDiff === 0 &&
+                          today.getDate() < birthDate.getDate())
+                      ) {
+                        age--;
+                      }
+                      return `${age} year${age !== 1 ? "s" : ""} old`;
+                    })()}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Born: {new Date(cat.birthday).toLocaleDateString()}
+                  </p>
+                </>
+              )}
               {cat.breed && <p>Breed: {cat.breed}</p>}
             </div>
             <button
               onClick={() => setIsEditing(true)}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              className="bg-violet-500 text-white px-4 py-2 rounded hover:bg-violet-600"
             >
               Edit
             </button>

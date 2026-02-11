@@ -164,7 +164,7 @@ export default function VisitList({ catId, visits = [], onVisitsUpdated }: Visit
                 <div className="flex gap-2">
                   <button
                     onClick={() => updateVisit(v)}
-                    className="bg-green-500 text-white px-3 py-1 rounded text-sm"
+                    className="bg-cyan-500 text-white px-3 py-1 rounded text-sm"
                   >
                     Save
                   </button>
@@ -196,15 +196,16 @@ export default function VisitList({ catId, visits = [], onVisitsUpdated }: Visit
                 <div className="flex gap-2">
                   <button
                     onClick={() => setEditingVisit(v)}
-                    className="text-blue-500 text-sm hover:underline"
+                    className="text-violet-500 text-sm hover:underline"
                   >
                     Edit
                   </button>
+                  |
                   <button
                     onClick={() => deleteVisit(v.id)}
-                    className="text-red-500 text-sm hover:underline"
+                    className="text-pink-500 text-sm hover:underline"
                   >
-                    Delete
+                    X
                   </button>
                 </div>
               </div>
@@ -245,7 +246,7 @@ export default function VisitList({ catId, visits = [], onVisitsUpdated }: Visit
         />
         <button
           onClick={addVisit}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="bg-cyan-500 text-white px-4 py-2 rounded hover:bg-cyan-600"
         >
           Add
         </button>

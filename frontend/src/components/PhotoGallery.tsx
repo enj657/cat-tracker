@@ -18,6 +18,7 @@ export default function PhotoGallery({
   const [caption, setCaption] = useState("");
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleSubmit = async () => {
     if (uploadMode === "file" && !selectedFile) {
@@ -131,6 +132,33 @@ export default function PhotoGallery({
     }
   };
 
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const files = e.dataTransfer.files;
+    if (files.length === 0) return;
+
+    const file = files[0];
+    if (!file.type.startsWith("image/")) {
+      alert("Please drop an image file");
+      return;
+    }
+
+    setSelectedFile(file);
+    setUploadMode("file");
+  };
+
   return (
     <div className="p-4 border rounded mt-4">
       <h2 className="text-xl font-semibold mb-2">Photo Gallery</h2>
@@ -168,16 +196,16 @@ export default function PhotoGallery({
                   e.stopPropagation();
                   handleDeletePhoto(photo.id);
                 }}
-                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                className="absolute top-1 right-1 bg-pink-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
                 title="Delete photo"
               >
-                ×
+                X
               </button>
-              {photo.caption && (
-                <p className="text-sm p-1 text-center bg-gray-100">
+              {/* {photo.caption && (
+                <p className="text-sm p-1 text-center bg-gray-600">
                   {photo.caption}
                 </p>
-              )}
+              )} */}
             </div>
           ))}
         </div>
@@ -191,7 +219,7 @@ export default function PhotoGallery({
           onClick={() => setUploadMode("file")}
           className={`px-3 py-1 rounded ${
             uploadMode === "file"
-              ? "bg-blue-500 text-white"
+              ? "bg-violet-500 text-white"
               : "bg-gray-200 text-gray-700"
           }`}
         >
@@ -210,52 +238,69 @@ export default function PhotoGallery({
       </div>
 
       {/* Add Photo Form */}
-      <div className="flex flex-col sm:flex-row gap-2 items-end">
-        {uploadMode === "file" ? (
-          <div className="flex-1">
-            <label className="block text-sm font-medium mb-1">
-              Choose Image
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-              className="border p-2 rounded w-full"
-            />
-          </div>
-        ) : (
-          <div className="flex-1">
-            <label className="block text-sm font-medium mb-1">Image URL</label>
-            <input
-              type="text"
-              placeholder="https://example.com/image.jpg"
-              className="border p-2 rounded w-full"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-            />
-          </div>
+      <div
+        className={`border-2 border-dashed rounded-lg p-4 transition-colors ${
+          isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300"
+        }`}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        {isDragging && (
+          <p className="text-center text-blue-500 font-semibold mb-2">
+            Drop image here...
+          </p>
         )}
 
-        <div className="flex-1">
-          <label className="block text-sm font-medium mb-1">
-            Caption (optional)
-          </label>
-          <input
-            type="text"
-            placeholder="Caption"
-            className="border p-2 rounded w-full"
-            value={caption}
-            onChange={(e) => setCaption(e.target.value)}
-          />
-        </div>
+        <div className="flex flex-col sm:flex-row gap-2 items-end">
+          {uploadMode === "file" ? (
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">
+                Choose Image {selectedFile && `(${selectedFile.name})`}
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                className="border p-2 rounded w-full"
+              />
+            </div>
+          ) : (
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">
+                Image URL
+              </label>
+              <input
+                type="text"
+                placeholder="https://example.com/image.jpg"
+                className="border p-2 rounded w-full"
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+              />
+            </div>
+          )}
 
-        <button
-          onClick={handleSubmit}
-          disabled={uploading}
-          className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
-        >
-          {uploading ? "Adding..." : "Add Photo"}
-        </button>
+          <div className="flex-1">
+            <label className="block text-sm font-medium mb-1">
+              Caption (optional)
+            </label>
+            <input
+              type="text"
+              placeholder="Caption"
+              className="border p-2 rounded w-full"
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+            />
+          </div>
+
+          <button
+            onClick={handleSubmit}
+            disabled={uploading}
+            className="bg-cyan-500 text-white px-6 py-2 rounded hover:bg-cyan-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            {uploading ? "Adding..." : "Add Photo"}
+          </button>
+        </div>
       </div>
 
       {/* Lightbox */}
@@ -269,7 +314,7 @@ export default function PhotoGallery({
               onClick={() => setLightboxImage(null)}
               className="absolute top-4 right-4 text-white text-3xl font-bold hover:text-gray-300"
             >
-              x
+              X
             </button>
             <img
               src={lightboxImage}

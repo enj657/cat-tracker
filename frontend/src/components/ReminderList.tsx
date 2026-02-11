@@ -180,7 +180,7 @@ export default function RemindersSection({
                 <div className="flex gap-2">
                   <button
                     onClick={() => updateReminder(r)}
-                    className="bg-green-500 text-white px-3 py-1 rounded text-sm"
+                    className="bg-cyan-500 text-white px-3 py-1 rounded text-sm"
                   >
                     Save
                   </button>
@@ -213,15 +213,16 @@ export default function RemindersSection({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setEditingReminder(r)}
-                    className="text-blue-500 text-sm hover:underline"
+                    className="text-violet-500 text-sm hover:underline"
                   >
                     Edit
                   </button>
+                  |
                   <button
                     onClick={() => deleteReminder(r.id)}
-                    className="text-red-500 text-sm hover:underline"
+                    className="text-pink-500 text-sm hover:underline"
                   >
-                    Delete
+                    X
                   </button>
                 </div>
               </div>
@@ -233,7 +234,7 @@ export default function RemindersSection({
       {reminders.length > 3 && (
         <button
           onClick={() => setShowAll(!showAll)}
-          className="text-blue-500 text-sm hover:underline mb-4"
+          className="text-violet-500 text-sm hover:underline mb-4"
         >
           {showAll ? "Show less" : `Show all ${reminders.length} reminders`}
         </button>
@@ -254,7 +255,7 @@ export default function RemindersSection({
         />
         <button
           onClick={addReminder}
-          className="bg-blue-500 text-white px-3 rounded hover:bg-blue-600"
+          className="bg-cyan-500 text-white px-3 rounded hover:bg-cyan-600"
         >
           Add
         </button>

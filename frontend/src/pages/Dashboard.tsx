@@ -32,13 +32,13 @@ export default function Dashboard() {
         <div className="flex gap-2">
           <button
             onClick={() => setShowModal(true)}
-            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+            className="bg-cyan-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
           >
             + Add Cat
           </button>
           <button
             onClick={logout}
-            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+            className="bg-violet-500 text-white px-4 py-2 rounded-md hover:bg-violet-600"
           >
             Logout
           </button>
@@ -58,6 +58,7 @@ export default function Dashboard() {
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
           <div className="bg-gray-600 p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h3 className="text-lg text-center">Add New Cat</h3>
             <AddCatForm
               onCancel={() => setShowModal(false)}
               onCatSave={(newCat: Cat) => {
