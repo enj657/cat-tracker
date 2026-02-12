@@ -75,15 +75,34 @@ export default function CatCard({ cat, onDelete }: CatCardProps) {
               {(() => {
                 const birthDate = new Date(cat.birthday);
                 const today = new Date();
-                let age = today.getFullYear() - birthDate.getFullYear();
-                const monthDiff = today.getMonth() - birthDate.getMonth();
-                if (
-                  monthDiff < 0 ||
-                  (monthDiff === 0 && today.getDate() < birthDate.getDate())
-                ) {
-                  age--;
+
+                const diffTime = today.getTime() - birthDate.getTime();
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays < 1) return "Today";
+                if (diffDays < 30)
+                  return `${diffDays} day${diffDays !== 1 ? "s" : ""} old`;
+
+                let years = today.getFullYear() - birthDate.getFullYear();
+                let months = today.getMonth() - birthDate.getMonth();
+
+                if (today.getDate() < birthDate.getDate()) {
+                  months--;
                 }
-                return `${age} year${age !== 1 ? "s" : ""} old`;
+
+                if (months < 0) {
+                  years--;
+                  months += 12;
+                }
+
+                const yearText =
+                  years > 0 ? `${years} year${years !== 1 ? "s" : ""}` : "";
+                const monthText =
+                  months > 0 ? `${months} month${months !== 1 ? "s" : ""}` : "";
+
+                return (
+                  [yearText, monthText].filter(Boolean).join(", ") + " old"
+                );
               })()}
             </p>
           )}
@@ -115,29 +134,31 @@ export default function CatCard({ cat, onDelete }: CatCardProps) {
 
               const visitDisplay = overdueVisit ? (
                 <p className="text-pink-600 font-semibold">
-                  ⚠️ Missed: {overdueVisit.visit_type} (
+                  ⚠️ Missed Visit: {overdueVisit.visit_type} (
                   {new Date(overdueVisit.date).toLocaleDateString()})
                 </p>
               ) : upcomingVisit ? (
-                <p className="text-cyan-600">
+                <p className="text-cyan-600 font-semibold">
                   📅 Next visit:{" "}
                   {new Date(upcomingVisit.date).toLocaleDateString()}
                 </p>
               ) : (
-                <p className="text-gray-400">No visits scheduled</p>
+                <p className="text-gray-400 font-semibold">
+                  No visits scheduled
+                </p>
               );
 
               const reminderDisplay = overdueReminder ? (
                 <p className="text-pink-600 font-semibold">
-                  ⚠️ Overdue: {overdueReminder.title}
+                  ⚠️ Missed Reminder: {overdueReminder.title}
                 </p>
               ) : upcomingReminder ? (
-                <p className="text-cyan-600">
+                <p className="text-cyan-600 font-semibold">
                   ⏰ {upcomingReminder.title} (
                   {new Date(upcomingReminder.due_date).toLocaleDateString()})
                 </p>
               ) : (
-                <p className="text-gray-400">No reminders set</p>
+                <p className="text-gray-400 font-semibold">No reminders set</p>
               );
 
               return (
