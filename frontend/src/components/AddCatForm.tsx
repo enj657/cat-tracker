@@ -57,11 +57,12 @@ export default function AddCatForm({
         className="w-full p-2 border rounded"
       />
       <h3>Birth Date</h3>
-      <input
-        name="birthday"
-        type="date"
-        onChange={handleChange}
+      <input 
+        name="birthday" 
+        type="date" 
+        onChange={handleChange} 
         value={formData.birthday}
+        max={new Date().toISOString().split('T')[0]}
         required
         className="w-full p-2 border rounded"
       />
