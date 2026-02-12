@@ -23,8 +23,8 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-600">
-      <div className="bg-gray-700 p-8 rounded-lg shadow-md w-96">
+    <div className="min-h-screen flex items-center justify-center bg-gray-700">
+      <div className="bg-gray-800 p-8 rounded-lg shadow-md w-96">
         <h2 className="text-2xl font-bold mb-6 text-center">Create Account</h2>
         
         {error && (
