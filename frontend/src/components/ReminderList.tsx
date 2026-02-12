@@ -14,25 +14,30 @@ export default function RemindersSection({
 }: RemindersSectionProps) {
   const [title, setTitle] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [editingReminder, setEditingReminder] = useState<Reminder | null>(null);
+  const [editingReminder, setEditingReminder] =
+    useState<Reminder | null>(null);
   const [showAll, setShowAll] = useState(false);
 
   const addReminder = async () => {
-    if (!title || !dueDate) return alert("Please fill all fields.");
+    if (!title) return alert("Please enter a title.");
 
     try {
-      const res = await fetch(`http://localhost:3000/cats/${catId}/reminders`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          reminder: {
-            title,
-            due_date: dueDate,
-            completed: false,
-          },
-        }),
-      });
+      const res = await fetch(
+        `http://localhost:3000/cats/${catId}/reminders`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            reminder: {
+              title,
+              due_date: dueDate || null,
+              completed: false,
+            },
+          }),
+        }
+      );
+
       const newReminder = await res.json();
       onRemindersUpdated([...reminders, newReminder]);
       setTitle("");
@@ -59,15 +64,17 @@ export default function RemindersSection({
               completed: editingReminder.completed,
             },
           }),
-        },
+        }
       );
 
       const updatedReminder = await res.json();
+
       onRemindersUpdated(
         reminders.map((r) =>
-          r.id === updatedReminder.id ? updatedReminder : r,
-        ),
+          r.id === updatedReminder.id ? updatedReminder : r
+        )
       );
+
       setEditingReminder(null);
     } catch (error) {
       console.error("Error updating reminder:", error);
@@ -87,14 +94,15 @@ export default function RemindersSection({
               completed: !reminder.completed,
             },
           }),
-        },
+        }
       );
 
       const updatedReminder = await res.json();
+
       onRemindersUpdated(
         reminders.map((r) =>
-          r.id === updatedReminder.id ? updatedReminder : r,
-        ),
+          r.id === updatedReminder.id ? updatedReminder : r
+        )
       );
     } catch (error) {
       console.error("Error toggling reminder:", error);
@@ -110,32 +118,86 @@ export default function RemindersSection({
         {
           method: "DELETE",
           credentials: "include",
-        },
+        }
       );
 
       if (res.ok) {
-        onRemindersUpdated(reminders.filter((r) => r.id !== reminderId));
+        onRemindersUpdated(
+          reminders.filter((r) => r.id !== reminderId)
+        );
       }
     } catch (error) {
       console.error("Error deleting reminder:", error);
     }
   };
 
-  const displayedReminders = showAll 
-  ? [...reminders].sort((a, b) => {
-      // Incomplete reminders first
-      if (a.completed !== b.completed) return a.completed ? 1 : -1;
-      // Then sort by due date (soonest first)
-      return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
-    })
-  : [...reminders].sort((a, b) => {
-      if (a.completed !== b.completed) return a.completed ? 1 : -1;
-      return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
-    }).slice(0, 3);
+  const displayedReminders = showAll
+    ? [...reminders].sort((a, b) => {
+        if (a.completed !== b.completed)
+          return a.completed ? 1 : -1;
+
+        if (!a.completed && !b.completed) {
+          if (a.due_date && !b.due_date) return -1;
+          if (!a.due_date && b.due_date) return 1;
+          if (a.due_date && b.due_date) {
+            return (
+              new Date(a.due_date).getTime() -
+              new Date(b.due_date).getTime()
+            );
+          }
+        }
+
+        if (
+          a.completed &&
+          b.completed &&
+          a.due_date &&
+          b.due_date
+        ) {
+          return (
+            new Date(b.due_date).getTime() -
+            new Date(a.due_date).getTime()
+          );
+        }
+
+        return 0;
+      })
+    : [...reminders]
+        .sort((a, b) => {
+          if (a.completed !== b.completed)
+            return a.completed ? 1 : -1;
+
+          if (!a.completed && !b.completed) {
+            if (a.due_date && !b.due_date) return -1;
+            if (!a.due_date && b.due_date) return 1;
+            if (a.due_date && b.due_date) {
+              return (
+                new Date(a.due_date).getTime() -
+                new Date(b.due_date).getTime()
+              );
+            }
+          }
+
+          if (
+            a.completed &&
+            b.completed &&
+            a.due_date &&
+            b.due_date
+          ) {
+            return (
+              new Date(b.due_date).getTime() -
+              new Date(a.due_date).getTime()
+            );
+          }
+
+          return 0;
+        })
+        .slice(0, 3);
 
   return (
     <div className="p-4 border rounded mt-4">
-      <h2 className="text-xl font-semibold mb-2">Reminders</h2>
+      <h2 className="text-xl font-semibold mb-2">
+        Reminders
+      </h2>
 
       <ul className="space-y-2 mb-4">
         {displayedReminders.map((r) => (
@@ -155,7 +217,7 @@ export default function RemindersSection({
                 />
                 <input
                   type="date"
-                  value={editingReminder.due_date}
+                  value={editingReminder.due_date || ""}
                   onChange={(e) =>
                     setEditingReminder({
                       ...editingReminder,
@@ -175,8 +237,11 @@ export default function RemindersSection({
                       })
                     }
                   />
-                  <span className="text-sm">Completed</span>
+                  <span className="text-sm">
+                    Completed
+                  </span>
                 </label>
+
                 <div className="flex gap-2">
                   <button
                     onClick={() => updateReminder(r)}
@@ -185,7 +250,9 @@ export default function RemindersSection({
                     Save
                   </button>
                   <button
-                    onClick={() => setEditingReminder(null)}
+                    onClick={() =>
+                      setEditingReminder(null)
+                    }
                     className="bg-gray-300 px-3 py-1 rounded text-sm"
                   >
                     Cancel
@@ -198,29 +265,64 @@ export default function RemindersSection({
                   <input
                     type="checkbox"
                     checked={r.completed}
-                    onChange={() => toggleComplete(r)}
+                    onChange={() =>
+                      toggleComplete(r)
+                    }
                     className="w-5 h-5 cursor-pointer"
                   />
                   <div
-                    className={r.completed ? "line-through text-gray-500" : ""}
+                    className={
+                      r.completed
+                        ? "line-through text-gray-500"
+                        : ""
+                    }
                   >
-                    <p className="font-medium">{r.title}</p>
-                    <p className="text-sm text-gray-600">
-                      Due: {new Date(r.due_date).toLocaleDateString()}
+                    <p className="font-medium">
+                      {r.title}
+                    </p>
+                    <p
+                      className={`text-sm ${
+                        !r.completed &&
+                        r.due_date &&
+                        new Date(r.due_date) <
+                          new Date()
+                          ? "text-pink-600 font-semibold"
+                          : "text-gray-600"
+                      }`}
+                    >
+                      {r.due_date ? (
+                        <>
+                          {!r.completed &&
+                            new Date(r.due_date) <
+                              new Date() &&
+                            "⚠️ "}
+                          Due:{" "}
+                          {new Date(
+                            r.due_date
+                          ).toLocaleDateString()}
+                        </>
+                      ) : (
+                        "No due date"
+                      )}
                     </p>
                   </div>
                 </div>
+
                 <div className="flex gap-2">
                   <button
-                    onClick={() => setEditingReminder(r)}
-                    className="text-violet-500 text-sm hover:underline"
+                    onClick={() =>
+                      setEditingReminder(r)
+                    }
+                    className="text-violet-500 text-sm font-bold hover:underline"
                   >
                     Edit
                   </button>
                   |
                   <button
-                    onClick={() => deleteReminder(r.id)}
-                    className="text-pink-500 text-sm hover:underline"
+                    onClick={() =>
+                      deleteReminder(r.id)
+                    }
+                    className="text-pink-500 text-sm font-bold hover:underline"
                   >
                     X
                   </button>
@@ -236,7 +338,9 @@ export default function RemindersSection({
           onClick={() => setShowAll(!showAll)}
           className="text-violet-500 text-sm hover:underline mb-4"
         >
-          {showAll ? "Show less" : `Show all ${reminders.length} reminders`}
+          {showAll
+            ? "Show less"
+            : `Show all ${reminders.length} reminders`}
         </button>
       )}
 
@@ -245,13 +349,17 @@ export default function RemindersSection({
           className="border p-2 rounded w-1/2"
           placeholder="Reminder title"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e) =>
+            setTitle(e.target.value)
+          }
         />
         <input
           className="border p-2 rounded w-1/3"
           type="date"
           value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
+          onChange={(e) =>
+            setDueDate(e.target.value)
+          }
         />
         <button
           onClick={addReminder}
