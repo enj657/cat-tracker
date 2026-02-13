@@ -79,7 +79,7 @@ export default function Dashboard() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-wrap justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold">Your Cats</h1>
           <p className="text-sm text-gray-600">
@@ -87,7 +87,7 @@ export default function Dashboard() {
           </p>
         </div>
 
-        <div className="flex gap-2 items-center">
+        <div className="flex flex-wrap gap-2 items-center">
           <select
             value={filter}
             onChange={(e) =>
@@ -126,7 +126,7 @@ export default function Dashboard() {
       </div>
 
       {filteredCats.length > 0 ? (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid md:grid-cols-3 grid-cols-1 gap-4">
           {filteredCats.map((cat) => (
             <CatCard
               key={cat.id}

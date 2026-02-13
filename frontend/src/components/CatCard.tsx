@@ -45,10 +45,16 @@ export default function CatCard({ cat, onDelete }: CatCardProps) {
 
   // Get next upcoming reminder
   const upcomingReminder = cat.reminders
-    ?.filter((r) => !r.completed && new Date(r.due_date) >= new Date())
-    .sort(
-      (a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime(),
-    )[0];
+    ?.filter(r => !r.completed)
+    .sort((a, b) => {
+      // Reminders with dates first by soonest
+      if (a.due_date && b.due_date) {
+        return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
+      }
+      if (a.due_date && !b.due_date) return -1; // with date first
+      if (!a.due_date && b.due_date) return 1;  // without date last
+      return 0; // both no date, keep order
+    })[0];
 
   return (
     <Link to={`/cats/${cat.id}`} className="block">
@@ -123,9 +129,11 @@ export default function CatCard({ cat, onDelete }: CatCardProps) {
                     new Date(b.date).getTime() - new Date(a.date).getTime(),
                 )[0];
 
-              // Check for overdue reminder
+              // Check for overdue reminder (only with due_date)
               const overdueReminder = cat.reminders
-                ?.filter((r) => !r.completed && new Date(r.due_date) < today)
+                ?.filter(
+                  (r) => r.due_date && !r.completed && new Date(r.due_date) < today
+                )
                 .sort(
                   (a, b) =>
                     new Date(b.due_date).getTime() -
@@ -148,18 +156,29 @@ export default function CatCard({ cat, onDelete }: CatCardProps) {
                 </p>
               );
 
-              const reminderDisplay = overdueReminder ? (
-                <p className="text-pink-600 font-semibold">
-                  ⚠️ Missed Reminder: {overdueReminder.title}
-                </p>
-              ) : upcomingReminder ? (
-                <p className="text-cyan-600 font-semibold">
-                  ⏰ {upcomingReminder.title} (
-                  {new Date(upcomingReminder.due_date).toLocaleDateString()})
-                </p>
-              ) : (
-                <p className="text-gray-400 font-semibold">No reminders set</p>
-              );
+              const reminderDisplay = (() => {
+                if (overdueReminder) {
+                  return (
+                    <p className="text-pink-600 font-semibold">
+                      ⚠️ Missed Reminder: {overdueReminder.title} (
+                      {new Date(overdueReminder.due_date).toLocaleDateString()})
+                    </p>
+                  );
+                } else if (upcomingReminder) {
+                  return upcomingReminder.due_date ? (
+                    <p className="text-cyan-600 font-semibold">
+                      ⏰ {upcomingReminder.title} (
+                      {new Date(upcomingReminder.due_date).toLocaleDateString()})
+                    </p>
+                  ) : (
+                    <p className="text-cyan-600 font-semibold">
+                      ⏰ {upcomingReminder.title}
+                    </p>
+                  );
+                } else {
+                  return <p className="text-gray-400 font-semibold">No reminders set</p>;
+                }
+              })();
 
               return (
                 <>
