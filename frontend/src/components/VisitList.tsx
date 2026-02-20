@@ -336,7 +336,7 @@ export default function VisitList({
           onClick={() =>
             setShowAll(!showAll)
           }
-          className="text-blue-500 text-sm hover:underline mb-4"
+          className="text-violet-500 text-sm font-semibold hover:underline mb-4"
         >
           {showAll
             ? "Show less"

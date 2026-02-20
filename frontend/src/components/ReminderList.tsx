@@ -336,7 +336,7 @@ export default function RemindersSection({
       {reminders.length > 3 && (
         <button
           onClick={() => setShowAll(!showAll)}
-          className="text-violet-500 text-sm hover:underline mb-4"
+          className="text-violet-500 text-sm font-semibold hover:underline mb-4"
         >
           {showAll
             ? "Show less"
@@ -344,9 +344,9 @@ export default function RemindersSection({
         </button>
       )}
 
-      <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row gap-2">
         <input
-          className="border p-2 rounded w-1/2"
+          className="border p-2 rounded w-full sm:w-1/2"
           placeholder="Reminder title"
           value={title}
           onChange={(e) =>
@@ -354,7 +354,7 @@ export default function RemindersSection({
           }
         />
         <input
-          className="border p-2 rounded w-1/3"
+          className="border p-2 rounded w-full sm:w-1/2"
           type="date"
           value={dueDate}
           onChange={(e) =>
@@ -363,7 +363,7 @@ export default function RemindersSection({
         />
         <button
           onClick={addReminder}
-          className="bg-cyan-500 text-white px-3 rounded hover:bg-cyan-600"
+          className="bg-cyan-500 text-white px-4 py-2 rounded hover:bg-cyan-600"
         >
           Add
         </button>

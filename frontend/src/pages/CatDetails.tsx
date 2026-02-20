@@ -24,17 +24,17 @@ export default function CatDetails() {
   if (!cat) return <p>Loading...</p>;
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
+    <div className="p-4 sm:p-6 max-w-3xl mx-auto">
       <button
         onClick={() => navigate("/")}
-        className="bg-pink-500 hover:bg-pink-600 text-white rounded px-4 py-2 mb-4"
+        className="bg-pink-500 hover:bg-pink-600 text-white rounded px-4 py-2 mb-4 w-full sm:w-auto"
       >
         ← Back to Dashboard
       </button>
 
       {isEditing ? (
-        <div className="bg-gray-600 p-6 rounded-lg shadow mb-6">
-          <h2 className="text-xl font-bold p-4">Edit {cat.name}</h2>
+        <div className="bg-gray-600 p-4 sm:p-6 rounded-lg shadow mb-6">
+          <h2 className="text-xl font-bold mb-4">Edit {cat.name}</h2>
           <AddCatForm
             cat={cat}
             onCancel={() => setIsEditing(false)}
@@ -46,9 +46,11 @@ export default function CatDetails() {
         </div>
       ) : (
         <div className="mb-6">
-          <div className="flex justify-between items-start">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
             <div>
-              <h1 className="text-3xl font-bold mb-2">{cat.name}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+                {cat.name}
+              </h1>
               {cat.birthday && (
                 <>
                   <p>
@@ -77,7 +79,7 @@ export default function CatDetails() {
             </div>
             <button
               onClick={() => setIsEditing(true)}
-              className="bg-violet-500 text-white px-4 py-2 rounded hover:bg-violet-600"
+              className="bg-violet-500 text-white px-4 py-2 rounded hover:bg-violet-600 w-full sm:w-auto"
             >
               Edit
             </button>

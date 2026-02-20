@@ -165,7 +165,7 @@ export default function PhotoGallery({
 
       {/* Photo Grid */}
       {photos.length > 0 ? (
-        <div className="grid grid-cols-3 gap-2 mb-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
           {photos.map((photo) => (
             <div
               key={photo.id}
@@ -239,7 +239,7 @@ export default function PhotoGallery({
 
       {/* Add Photo Form */}
       <div
-        className={`border-2 border-dashed rounded-lg p-4 transition-colors ${
+        className={`border-2 border-dashed rounded-lg p-3 sm:p-4 transition-colors ${
           isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300"
         }`}
         onDragOver={handleDragOver}
@@ -248,13 +248,13 @@ export default function PhotoGallery({
       >
         {isDragging && (
           <p className="text-center text-blue-500 font-semibold mb-2">
-            Drop image here...
+            📸 Drop image here...
           </p>
         )}
 
-        <div className="flex flex-col sm:flex-row gap-2 items-end">
+        <div className="flex flex-col sm:flex-row sm:items-end gap-2">
           {uploadMode === "file" ? (
-            <div className="flex-1">
+            <div className="w-full sm:w-1/3">
               <label className="block text-sm font-medium mb-1">
                 Choose Image {selectedFile && `(${selectedFile.name})`}
               </label>
@@ -266,7 +266,7 @@ export default function PhotoGallery({
               />
             </div>
           ) : (
-            <div className="flex-1">
+            <div className="w-full sm:w-1/3">
               <label className="block text-sm font-medium mb-1">
                 Image URL
               </label>
@@ -280,7 +280,7 @@ export default function PhotoGallery({
             </div>
           )}
 
-          <div className="flex-1">
+          <div className="w-full sm:w-1/3">
             <label className="block text-sm font-medium mb-1">
               Caption (optional)
             </label>
@@ -296,9 +296,9 @@ export default function PhotoGallery({
           <button
             onClick={handleSubmit}
             disabled={uploading}
-            className="bg-cyan-500 text-white px-6 py-2 rounded hover:bg-cyan-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto bg-cyan-500 text-white px-4 py-2 rounded hover:bg-cyan-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            {uploading ? "Adding..." : "Add Photo"}
+            {uploading ? "Adding..." : "Add"}
           </button>
         </div>
       </div>
