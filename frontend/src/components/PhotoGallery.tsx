@@ -103,7 +103,7 @@ export default function PhotoGallery({
     return photo.display_url || photo.image_url;
   };
 
-  const setProfilePhoto = async (photoId: number) => {
+  const setProfilePhoto = async (photoId: number, currentlyProfile: boolean) => {
     try {
       const res = await fetch(
         `http://localhost:3000/cats/${catId}/photos/${photoId}`,
@@ -113,22 +113,31 @@ export default function PhotoGallery({
           credentials: "include",
           body: JSON.stringify({
             photo: {
-              profile_photo: true,
+              profile_photo: !currentlyProfile,
             },
           }),
         },
       );
 
       if (res.ok) {
-        // Unset all other photos and set this one
-        const updatedPhotos = photos.map((p) => ({
-          ...p,
-          profile_photo: p.id === photoId,
-        }));
-        onPhotosUpdated(updatedPhotos);
+        if (!currentlyProfile) {
+          // Setting as profile - unset all others
+          const updatedPhotos = photos.map((p) => ({
+            ...p,
+            profile_photo: p.id === photoId,
+          }));
+          onPhotosUpdated(updatedPhotos);
+        } else {
+          // Unsetting profile
+          const updatedPhotos = photos.map((p) => ({
+            ...p,
+            profile_photo: false,
+          }));
+          onPhotosUpdated(updatedPhotos);
+        }
       }
     } catch (error) {
-      console.error("Error setting profile photo:", error);
+      console.error("Error toggling profile photo:", error);
     }
   };
 
@@ -180,14 +189,14 @@ export default function PhotoGallery({
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setProfilePhoto(photo.id);
+                  setProfilePhoto(photo.id, photo.profile_photo || false);
                 }}
                 className={`absolute top-1 left-1 text-2xl ${
                   photo.profile_photo
                     ? "opacity-100"
                     : "opacity-0 group-hover:opacity-100"
                 } transition-opacity`}
-                title="Set as profile photo"
+                title={photo.profile_photo ? "Remove as profile photo" : "Set as profile photo"}
               >
                 {photo.profile_photo ? "⭐" : "☆"}
               </button>
@@ -201,11 +210,6 @@ export default function PhotoGallery({
               >
                 X
               </button>
-              {/* {photo.caption && (
-                <p className="text-sm p-1 text-center bg-gray-600">
-                  {photo.caption}
-                </p>
-              )} */}
             </div>
           ))}
         </div>

@@ -49,9 +49,8 @@ export default function SidebarDashboard() {
 
   const getProfilePhotoUrl = (cat: Cat) => {
     const profilePhoto = cat.photos?.find((p) => p.profile_photo);
-    const displayPhoto = profilePhoto || cat.photos?.[0];
-    return displayPhoto
-      ? displayPhoto.display_url || displayPhoto.image_url
+    return profilePhoto
+      ? profilePhoto.display_url || profilePhoto.image_url
       : null;
   };
 
@@ -94,6 +93,36 @@ export default function SidebarDashboard() {
     });
 
     return events.sort((a, b) => a.date.getTime() - b.date.getTime());
+  };
+
+  const getUpcomingBirthdays = () => {
+    const today = new Date();
+    const birthdays = cats
+      .filter((cat) => cat.birthday)
+      .map((cat) => {
+        const birthDate = new Date(cat.birthday!);
+        const nextBirthday = new Date(
+          today.getFullYear(),
+          birthDate.getMonth(),
+          birthDate.getDate(),
+        );
+
+        // If birthday already passed this year, get next year's
+        if (nextBirthday < today) {
+          nextBirthday.setFullYear(today.getFullYear() + 1);
+        }
+
+        const daysUntil = Math.ceil(
+          (nextBirthday.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+        );
+        const turningAge = nextBirthday.getFullYear() - birthDate.getFullYear();
+
+        return { cat, nextBirthday, daysUntil, turningAge };
+      })
+      .sort((a, b) => a.daysUntil - b.daysUntil)
+      .slice(0, 3);
+
+    return birthdays;
   };
 
   const refreshCats = () => {
@@ -342,7 +371,40 @@ export default function SidebarDashboard() {
                     </p>
                   </div>
                 </div>
-
+                {/* Upcoming Birthdays */}
+                {getUpcomingBirthdays().length > 0 && (
+                  <div className="bg-gray-800 rounded-lg shadow p-6 mb-6">
+                    <h3 className="text-xl font-bold mb-4 text-orange-500">
+                      🎂 Upcoming Birthdays
+                    </h3>
+                    <div className="space-y-3">
+                      {getUpcomingBirthdays().map((birthday) => (
+                        <div
+                          key={birthday.cat.id}
+                          onClick={() => handleCatSelect(birthday.cat.id)}
+                          className="bg-gray-900 flex items-center justify-between p-3 rounded cursor-pointer hover:bg-gray-700 border-l-4 border-orange-500"
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="text-2xl">🎂</span>
+                            <div>
+                              <p className="font-semibold text-white">
+                                {birthday.cat.name}
+                              </p>
+                              <p className="text-sm text-gray-400">
+                                Turning {birthday.turningAge}
+                              </p>
+                            </div>
+                          </div>
+                          <p className="text-sm text-orange-400">
+                            {birthday.daysUntil === 0
+                              ? "Today! 🎉"
+                              : `in ${birthday.daysUntil} day${birthday.daysUntil !== 1 ? "s" : ""}`}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 {/* Missed Events */}
                 {missedEvents.length > 0 && (
                   <div className="bg-gray-800 rounded-lg shadow p-6 mb-6">

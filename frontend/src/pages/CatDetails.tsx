@@ -67,7 +67,8 @@ export default function CatDetails({ onUpdate }: CatDetailsProps) {
                     })()}
                   </p>
                   <p className="">
-                    Born: {new Date(cat.birthday).toLocaleDateString()}
+                    Born:{" "}
+                    {new Date(cat.birthday + "T00:00:00").toLocaleDateString()}
                   </p>
                 </div>
               )}
