@@ -180,7 +180,7 @@ export default function VisitList({
     : [...visits].sort(sortVisits).slice(0, 3);
 
   return (
-    <div className="p-4 border rounded mt-4">
+    <div className="bg-gray-800 p-4 rounded mt-4">
       <h2 className="text-xl font-semibold mb-2">
         Vet Visits
       </h2>

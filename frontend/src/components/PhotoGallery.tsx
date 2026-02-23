@@ -160,7 +160,7 @@ export default function PhotoGallery({
   };
 
   return (
-    <div className="p-4 border rounded mt-4">
+    <div className="bg-gray-800 p-4 rounded mt-4">
       <h2 className="text-xl font-semibold mb-2">Photo Gallery</h2>
 
       {/* Photo Grid */}
@@ -254,7 +254,7 @@ export default function PhotoGallery({
 
         <div className="flex flex-col sm:flex-row sm:items-end gap-2">
           {uploadMode === "file" ? (
-            <div className="w-full sm:w-1/3">
+            <div className="w-full sm:w-1/2">
               <label className="block text-sm font-medium mb-1">
                 Choose Image {selectedFile && `(${selectedFile.name})`}
               </label>
@@ -266,7 +266,7 @@ export default function PhotoGallery({
               />
             </div>
           ) : (
-            <div className="w-full sm:w-1/3">
+            <div className="w-full sm:w-1/2">
               <label className="block text-sm font-medium mb-1">
                 Image URL
               </label>
@@ -280,7 +280,7 @@ export default function PhotoGallery({
             </div>
           )}
 
-          <div className="w-full sm:w-1/3">
+          <div className="w-full sm:w-1/2">
             <label className="block text-sm font-medium mb-1">
               Caption (optional)
             </label>
