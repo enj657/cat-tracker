@@ -4,11 +4,11 @@ class Cat < ApplicationRecord
   has_many :visits, dependent: :destroy
   has_many :reminders, dependent: :destroy
   has_many :photos, dependent: :destroy
+  has_many :weights, dependent: :destroy
 
   validates :name, presence: true
   validates :age, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
   
-  # Calculate age from birthday
   def calculated_age
     return age if birthday.nil?
     

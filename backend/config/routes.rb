@@ -10,8 +10,9 @@ Rails.application.routes.draw do
   end
 
   resources :cats do
-    resources :visits
-    resources :reminders
-    resources :photos
-  end
+  resources :visits
+  resources :reminders
+  resources :photos
+  resources :weights
+end
 end
