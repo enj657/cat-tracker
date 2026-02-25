@@ -5,46 +5,19 @@ class CatsController < ApplicationController
 
   # GET /cats
   def index
-    cats = current_user.cats.includes(:visits, :reminders, :photos, :users)
-    
-    cats_json = cats.map do |cat|
-      cat_data = cat.as_json(include: [:users, :visits, :reminders])
-      
-      # Add photos with display_url
-      photos_with_urls = cat.photos.map do |photo|
-        photo.as_json.merge(
-          display_url: photo.image.attached? ? url_for(photo.image) : photo.image_url
-        )
-      end
-      
-      cat_data['photos'] = photos_with_urls
-      cat_data
-    end
-    
-    render json: cats_json
+    cats = current_user.cats.includes(:visits, :reminders, :photos, :weights, :users)
+    render json: cats.map { |cat| build_cat_json(cat) }
   end
 
   # GET /cats/:id
   def show
-    cat_json = @cat.as_json(include: [:users, :visits, :reminders])
-    
-    # Add photos with display_url
-    photos_with_urls = @cat.photos.order(created_at: :asc).map do |photo|
-      photo.as_json.merge(
-        display_url: photo.image.attached? ? url_for(photo.image) : photo.image_url
-      )
-    end
-    
-    cat_json['photos'] = photos_with_urls
-    
-    render json: cat_json
+    render json: build_cat_json(@cat)
   end
 
   # POST /cats
   def create
     cat = Cat.new(params[:cat].permit(:name, :age, :breed, :birthday, user_ids: []))
     if cat.save
-      # Assign the current user to the cat
       cat.users << current_user unless params[:cat][:user_ids]
       cat.user_ids = params[:cat][:user_ids] if params[:cat][:user_ids]
       render json: cat.as_json(include: [ :users ]), status: :created
@@ -57,19 +30,7 @@ class CatsController < ApplicationController
   def update
     if @cat.update(params[:cat].permit(:name, :age, :breed, :birthday, user_ids: []))
       @cat.user_ids = params[:cat][:user_ids] if params[:cat][:user_ids]
-      
-      # Include photos with display_url like we do in show
-      cat_json = @cat.as_json(include: [:users, :visits, :reminders])
-      
-      photos_with_urls = @cat.photos.order(created_at: :asc).map do |photo|
-        photo.as_json.merge(
-          display_url: photo.image.attached? ? url_for(photo.image) : photo.image_url
-        )
-      end
-      
-      cat_json['photos'] = photos_with_urls
-      
-      render json: cat_json
+      render json: build_cat_json(@cat)
     else
       render json: { errors: @cat.errors.full_messages }, status: :unprocessable_entity
     end
@@ -83,12 +44,23 @@ class CatsController < ApplicationController
 
   private
 
-  # Set cat for show, update, destroy
+  def build_cat_json(cat)
+    cat_data = cat.as_json(include: [:users, :visits, :reminders, :weights])
+
+    photos_with_urls = cat.photos.order(created_at: :asc).map do |photo|
+      photo.as_json.merge(
+        display_url: photo.image.attached? ? url_for(photo.image) : photo.image_url
+      )
+    end
+
+    cat_data['photos'] = photos_with_urls
+    cat_data
+  end
+
   def set_cat
     @cat = Cat.find(params[:id])
   end
 
-  # Ensure only users assigned to the cat can update/destroy it
   def authorize_user!
     unless @cat.users.include?(current_user)
       render json: { error: "You do not have permission to modify this cat" }, status: :forbidden

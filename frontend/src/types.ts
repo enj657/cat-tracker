@@ -4,15 +4,20 @@ export interface User {
   email: string;
 }
 
+export interface Photo {
+  id: number;
+  image_url: string;
+  display_url?: string;
+  caption?: string;
+  profile_photo?: boolean;
+}
+
 export interface Visit {
   id: number;
-  cat_id: number;
   visit_type: string;
   date: string;
-  notes: string;
-  completed?: boolean;
-  created_at: string;
-  updated_at: string;
+  notes?: string;
+  completed: boolean;
 }
 
 export interface Reminder {
@@ -22,25 +27,22 @@ export interface Reminder {
   completed: boolean;
 }
 
-export interface Photo {
+export interface Weight {
   id: number;
-  cat_id: number;
-  image_url: string;
-  display_url?: string;
-  caption: string;
-  profile_photo?: boolean;
-  created_at: string;
-  updated_at: string;
+  weight: number;
+  date: string;
+  notes?: string;
 }
 
 export interface Cat {
   id: number;
   name: string;
-  age: number;
+  age?: number;
+  breed?: string;
   birthday?: string;
-  breed: string;
-  users?: User[];
+  photos?: Photo[];
   visits?: Visit[];
   reminders?: Reminder[];
-  photos?: Photo[];
+  weights?: Weight[];
+  users?: User[];
 }
