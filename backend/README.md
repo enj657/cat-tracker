@@ -1,24 +1,28 @@
-# README
+# Backend (Ruby on Rails API)
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is the Rails API for the Cat Care Tracker app.
 
-Things you may want to cover:
+## Tech
+- Ruby on Rails
+- PostgreSQL
 
-* Ruby version
+## Setup
 
-* System dependencies
+```bash
+bundle install
+rails db:create db:migrate
+rails s
+```
 
-* Configuration
+## API Structure
+- /cats
+- /cats/:id/grooming_logs
+- /cats/:id/food_logs
+- /cats/:id/flea_treatments
+- /cats/:id/litter_box_logs
 
-* Database creation
 
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+## Notes
+- Uses RESTful, nested API routes
+- Includes model-level validations and custom validation logic
+- Authorization enforced at the controller level
