@@ -3,16 +3,22 @@ Rails.application.routes.draw do
     sessions: 'users/sessions',
     registrations: 'users/registrations'
   }
-  
+
   get "/users/current", to: "users#current"
+
   resources :households do
     resources :users
   end
 
   resources :cats do
-  resources :visits
-  resources :reminders
-  resources :photos
-  resources :weights
-end
+    resources :visits
+    resources :reminders
+    resources :photos
+    resources :weights
+    resources :behavior_logs
+    resources :grooming_logs
+    resources :flea_treatments
+    resources :food_logs
+    resources :litter_box_logs
+  end
 end

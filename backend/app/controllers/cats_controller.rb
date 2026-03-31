@@ -3,30 +3,30 @@ class CatsController < ApplicationController
   before_action :set_cat, only: [ :show, :update, :destroy ]
   before_action :authorize_user!, only: [ :update, :destroy ]
 
-  # GET /cats
   def index
-    cats = current_user.cats.includes(:visits, :reminders, :photos, :weights, :users)
+    cats = current_user.cats.includes(
+      :visits, :reminders, :photos, :weights,
+      :behavior_logs, :grooming_logs, :flea_treatments,
+      :food_logs, :litter_box_logs, :users
+    )
     render json: cats.map { |cat| build_cat_json(cat) }
   end
 
-  # GET /cats/:id
   def show
     render json: build_cat_json(@cat)
   end
 
-  # POST /cats
   def create
     cat = Cat.new(params[:cat].permit(:name, :age, :breed, :birthday, user_ids: []))
     if cat.save
       cat.users << current_user unless params[:cat][:user_ids]
       cat.user_ids = params[:cat][:user_ids] if params[:cat][:user_ids]
-      render json: cat.as_json(include: [ :users ]), status: :created
+      render json: cat.as_json(include: [:users]), status: :created
     else
       render json: { errors: cat.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /cats/:id
   def update
     if @cat.update(params[:cat].permit(:name, :age, :breed, :birthday, user_ids: []))
       @cat.user_ids = params[:cat][:user_ids] if params[:cat][:user_ids]
@@ -36,7 +36,6 @@ class CatsController < ApplicationController
     end
   end
 
-  # DELETE /cats/:id
   def destroy
     @cat.destroy
     head :no_content
@@ -45,7 +44,11 @@ class CatsController < ApplicationController
   private
 
   def build_cat_json(cat)
-    cat_data = cat.as_json(include: [:users, :visits, :reminders, :weights])
+    cat_data = cat.as_json(include: [
+      :users, :visits, :reminders, :weights,
+      :behavior_logs, :grooming_logs, :flea_treatments,
+      :food_logs, :litter_box_logs
+    ])
 
     photos_with_urls = cat.photos.order(created_at: :asc).map do |photo|
       photo.as_json.merge(

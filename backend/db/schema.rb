@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_23_182633) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_30_161132) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -42,6 +42,18 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_23_182633) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "behavior_logs", force: :cascade do |t|
+    t.bigint "cat_id", null: false
+    t.date "date", null: false
+    t.string "category", null: false
+    t.text "description"
+    t.string "severity", default: "mild"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cat_id", "date"], name: "index_behavior_logs_on_cat_id_and_date"
+    t.index ["cat_id"], name: "index_behavior_logs_on_cat_id"
+  end
+
   create_table "cat_users", force: :cascade do |t|
     t.bigint "cat_id", null: false
     t.bigint "user_id", null: false
@@ -60,10 +72,65 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_23_182633) do
     t.date "birthday"
   end
 
+  create_table "flea_treatments", force: :cascade do |t|
+    t.bigint "cat_id", null: false
+    t.date "date", null: false
+    t.string "product_name"
+    t.string "treatment_type", default: "flea_tick"
+    t.date "next_due_date"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cat_id", "date"], name: "index_flea_treatments_on_cat_id_and_date"
+    t.index ["cat_id"], name: "index_flea_treatments_on_cat_id"
+  end
+
+  create_table "food_logs", force: :cascade do |t|
+    t.bigint "cat_id", null: false
+    t.date "date", null: false
+    t.string "food_brand"
+    t.string "food_type"
+    t.boolean "prescription", default: false
+    t.boolean "is_food_change", default: false
+    t.string "previous_brand"
+    t.string "reaction", default: "none"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cat_id", "date"], name: "index_food_logs_on_cat_id_and_date"
+    t.index ["cat_id"], name: "index_food_logs_on_cat_id"
+  end
+
+  create_table "grooming_logs", force: :cascade do |t|
+    t.bigint "cat_id", null: false
+    t.date "date", null: false
+    t.string "grooming_type", null: false
+    t.string "performed_by"
+    t.date "next_due_date"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cat_id", "date"], name: "index_grooming_logs_on_cat_id_and_date"
+    t.index ["cat_id"], name: "index_grooming_logs_on_cat_id"
+  end
+
   create_table "households", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "litter_box_logs", force: :cascade do |t|
+    t.bigint "cat_id", null: false
+    t.date "date", null: false
+    t.string "action", null: false
+    t.string "litter_brand"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "has_issue", default: false, null: false
+    t.index ["cat_id", "date"], name: "index_litter_box_logs_on_cat_id_and_date"
+    t.index ["cat_id"], name: "index_litter_box_logs_on_cat_id"
   end
 
   create_table "photos", force: :cascade do |t|
@@ -123,8 +190,13 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_23_182633) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "behavior_logs", "cats"
   add_foreign_key "cat_users", "cats"
   add_foreign_key "cat_users", "users"
+  add_foreign_key "flea_treatments", "cats"
+  add_foreign_key "food_logs", "cats"
+  add_foreign_key "grooming_logs", "cats"
+  add_foreign_key "litter_box_logs", "cats"
   add_foreign_key "photos", "cats"
   add_foreign_key "reminders", "cats"
   add_foreign_key "users", "households"

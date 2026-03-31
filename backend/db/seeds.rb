@@ -1,22 +1,3 @@
-# Remove for production - using only locally
-# Clear old data
-Photo.destroy_all
-Reminder.destroy_all
-Visit.destroy_all
-CatUser.destroy_all
-Cat.destroy_all
-User.destroy_all
-Household.destroy_all
-
-# Remove for production - using only locally
-ActiveRecord::Base.connection.reset_pk_sequence!('households')
-ActiveRecord::Base.connection.reset_pk_sequence!('users')
-ActiveRecord::Base.connection.reset_pk_sequence!('cats')
-ActiveRecord::Base.connection.reset_pk_sequence!('cat_users')
-ActiveRecord::Base.connection.reset_pk_sequence!('visits')
-ActiveRecord::Base.connection.reset_pk_sequence!('reminders')
-ActiveRecord::Base.connection.reset_pk_sequence!('photos')
-
 # Households
 h1 = Household.create!(name: "Jacobs Family")
 h2 = Household.create!(name: "Smith Family")
